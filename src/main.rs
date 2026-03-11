@@ -1,10 +1,54 @@
 mod commands;
+mod prompt;
 
 use clap::{Parser, Subcommand};
+
+const LONG_ABOUT: &str = "\
+A sample CLI app in Rust — demonstrating commands, aliases, flags, and interactive prompts.
+
+COMMANDS (with aliases):
+  load,     l   Load and compile files from repository
+  save,     s   Save data to repository
+  query,    q   Query/find functions by FQN/pattern (supports wildcards)
+  clear,    c   Reset the database, or clear functions by FQN/pattern
+  invoke,   i   Invoke a specific function by name or FQN
+  test,     t   Run built-in integration test
+  generate, g   Generate DSL functions given a config key
+  watch,    w   Interactive step-by-step debugging of expression evaluation
+
+FLAGS:
+  -v, --verbose     Enable verbose output
+  -k, --keep        Persist functions after command (skip cleanup)
+  -p, --provision   Provision workspace after generation  (generate only)
+
+EXAMPLES:
+  cli_app load -v
+  cli_app l -v
+  cli_app save
+  cli_app save mypattern -k
+  cli_app query \"math/*\" -v
+  cli_app q \"*Add*\" -v
+  cli_app clear -v
+  cli_app clear math/foo math/bar -v
+  cli_app c \"*Add2*\" -v
+  cli_app invoke MyFunc 1 2 3 -v
+  cli_app i MyFunc 1 2 3
+  cli_app test -v
+  cli_app test -v -k
+  cli_app generate default -v
+  cli_app g mykey -v -k -p
+  cli_app watch \"sum(n1, sum(n2, n3))\" -v
+  cli_app w \"sum(n1, n2)\"
+
+  # Omit required args to be prompted interactively:
+  cli_app generate
+  cli_app invoke
+  cli_app watch";
 
 #[derive(Parser)]
 #[command(name = "cli_app")]
 #[command(about = "A sample CLI app in Rust")]
+#[command(long_about = LONG_ABOUT)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -52,8 +96,8 @@ enum Commands {
     /// Invoke a specific function by name or FQN
     #[command(alias = "i")]
     Invoke {
-        /// Function name or FQN
-        function: String,
+        /// Function name or FQN (prompted if omitted)
+        function: Option<String>,
         /// Parameters to pass to the function
         params: Vec<String>,
         #[arg(short, long)]
@@ -73,8 +117,8 @@ enum Commands {
     /// Generate DSL functions given a kodegen_config_key
     #[command(alias = "g")]
     Generate {
-        /// Config key (function FQN or directory)
-        kodegen_config_key: String,
+        /// Config key (function FQN or directory) — prompted if omitted
+        kodegen_config_key: Option<String>,
         #[arg(short, long)]
         verbose: bool,
         /// Persist functions after generation (skip cleanup)
@@ -88,8 +132,8 @@ enum Commands {
     /// Interactive step-by-step debugging of expression evaluation
     #[command(alias = "w")]
     Watch {
-        /// Expression to evaluate
-        expression: String,
+        /// Expression to evaluate — prompted if omitted
+        expression: Option<String>,
         #[arg(short, long)]
         verbose: bool,
     },
