@@ -1,7 +1,8 @@
-pub fn run(pattern: Option<String>, verbose: bool) {
+pub fn run(patterns: Vec<String>, verbose: bool) {
     if verbose { println!("[verbose] Querying..."); }
-    match pattern {
-        Some(p) => println!("Querying pattern: {}", p),
-        None    => println!("Querying all functions."),
+    if patterns.is_empty() {
+        println!("Querying all functions.");
+    } else {
+        println!("Querying patterns: {:?}", patterns);
     }
 }
