@@ -1,7 +1,14 @@
 [package]
-name = "cli_app"
+name = "cli_app_basab"
 version = "0.1.0"
 edition = "2024"
+description = "A sample CLI app in Rust with interactive prompts"
+license = "MIT"
+repository = "https://github.com/dattaray-basab/cli_app"
+
+[[bin]]
+name = "cli_app"
+path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
