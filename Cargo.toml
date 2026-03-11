@@ -1,6 +1,6 @@
 [package]
 name = "cli_app_basab"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2024"
 description = "A sample CLI app in Rust with interactive prompts"
 license = "MIT"
